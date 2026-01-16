@@ -1,0 +1,138 @@
+/* style.css – Turn Order app specific styling */
+
+/* 1. Turn Order Layout */
+body {
+  text-align: center;
+}
+
+h2 {
+  color: #F2E9E4;
+  padding-top: 1rem;
+}
+
+
+/* 2. Table styling overrides */
+
+#turn-order-body tr td:last-child {
+  padding: 10px 0px;
+}
+
+#turn-order-body tr td:nth-last-child(2) {
+  padding: 0px 12px;
+}
+
+/* Tracker table inside a cell */
+#turn-order-body td table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* allow flexible column sizing */
+}
+/* Tracker table cells */
+#turn-order-body .trackers-cell table td {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #9a8c98;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Make the left (name) column take remaining space and
+   the right (value) column as small as possible. */
+#turn-order-body .trackers-cell table td:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+#turn-order-body .trackers-cell table td:last-child {
+  white-space: nowrap;
+  width: 1px; /* forces minimal width while preserving content */
+  text-align: right;
+  padding-left: 0.5rem;
+  padding-right: 0.35rem;
+}
+
+/* Column width overrides – make key columns wider */
+#turn-order-body .name-cell, .name-header {
+  width: 25%;
+}
+#turn-order-body .delay-cell, .delay-header {
+  width: 15%;
+}
+#turn-order-body .speed-cell, .speed-header {
+  width: 15%;
+}
+#turn-order-body .trackers-cell, .tracker-header {
+  width: 30%;
+}
+
+/* 3. Form controls overrides */
+input[type="text"], input[type="number"] {
+  width: 100%;
+}
+/* Edit form inputs should be narrower */
+input[id^="edit-delay-"], input[id^="edit-speed-"] {
+  width: 4rem;
+}
+input[type="text"]:focus, input[type="number"]:focus {
+  border-color: #4a4e69;
+}
+
+
+/* 4. Buttons overrides */
+button {
+  margin-right: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+button:hover:not(:disabled) {
+  background: #22223b;
+}
+button:disabled {
+  background: #9a8c98;
+}
+
+/* Specific button groups */
+#turn-order-body .actions-cell button {
+  margin-right: 0.25rem;
+}
+
+/* Layout for the tables in the form section */
+/* Ensure the two tables are spaced nicely */
+body > table {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+body > table + table {
+  margin-top: 2rem;
+}
+
+/* Persistence table styling */
+.persistence-table {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 400px;
+  border-collapse: collapse;
+}
+.persistence-table th {
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+}
+.persistence-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  body {
+    padding: 0.5rem;
+  }
+  input[type="text"], input[type="number"], button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  button {
+    margin-right: 0;
+  }
+}

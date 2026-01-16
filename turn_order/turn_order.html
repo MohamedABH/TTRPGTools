@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn Order</title>
+    <script src="./src/main.js" defer></script>
+    <link rel="stylesheet" href="../src/style/main.css">
+    <link rel="stylesheet" href="../src/style/navbar.css">
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html" class="logo">🛠️ TTRPG Tools</a>
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../maze/html/maze.html">Maze</a></li>
+            <li><a href="./turn_order.html">Turn Order</a></li>
+        </ul>
+    </nav>
+    <h2>Turn <span id="current-turn">0</span></h2>
+    <table class="turn-table">
+        <thead>
+            <tr>
+                <th class="name-header">Character</th>
+                <th class="delay-header">Current delay</th>
+                <th class="speed-header">Effective speed</th>
+                <th class="trackers-header">Trackers</th>
+                <th class="actions-header">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="turn-order-body">
+            <!-- Turn order rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Advance Turn</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="number" id="turn-delay" placeholder="Turn Delay" required></td>
+                <td><button id="advance-turn-button">Next Turn</button></td>
+            </tr>
+            <tr>
+                <td><input type="number" id="cast-delay" placeholder="Cast Delay" required></td>
+                <td><button id="advance-cast-button">Next Cast</button></td>
+            </tr>
+            <tfoot id="turn-order-footer">
+                <tr>
+                    <td colspan="2"><button id="begin-turn-button">Begin turn order</button></td>
+                </tr>
+            </tfoot>
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="3">Add Fighter</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" id="fighter-name" placeholder="Name" required></td>
+                <td><input type="number" id="fighter-speed" placeholder="Base Speed" required></td>
+                <td><button id="add-fighter-btn">Add Character</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="persistence-table">
+        <thead>
+            <tr>
+                <th colspan="2">Turn Order Persistence</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><button id="save-turn-btn">Save Turn Order</button></td>
+                <td><button id="load-turn-btn">Load Turn Order</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="file" id="load-file-input" accept=".json" style="display:none;">
+</body>
+</html>

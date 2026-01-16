@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Generator</title>
+    <link rel="stylesheet" href="../../src/style/main.css">
+    <link rel="stylesheet" href="../../src/style/navbar.css">
+    <link rel="stylesheet" href="./src/maze.css">
+</head>
+<body>
+    <nav>
+        <a href="../../index.html" class="logo">🛠️ TTRPG Tools</a>
+        <ul>
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="./maze.html">Maze</a></li>
+            <li><a href="../../turn_order/turn_order.html">Turn Order</a></li>
+        </ul>
+    </nav>
+    <div class="main-content">
+        <div class="container">
+        <h1>🎲 Maze Generator</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="width">Maze Width:</label>
+                <input type="number" id="width" min="5" max="100" value="15">
+            </div>
+            <div class="control-group">
+                <label for="height">Maze Height:</label>
+                <input type="number" id="height" min="5" max="100" value="15">
+            </div>
+            <button onclick="generateMaze()">Generate Maze</button>
+            <button onclick="solveMaze()">Solve Maze</button>
+            <button onclick="toggleTextOutput()">Show Text</button>
+        </div>
+
+        <div class="info">
+            <div class="info-item">
+                <strong>Entrance:</strong> <span id="entrance">-</span>
+            </div>
+            <div class="info-item">
+                <strong>Exit:</strong> <span id="exit">-</span>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Generating maze...</div>
+
+        <div class="canvas-container">
+            <canvas id="mazeCanvas"></canvas>
+        </div>
+
+        <div class="text-output" id="textOutput">
+            <h3>Text Representation:</h3>
+            <pre id="textContent"></pre>
+        </div>
+    </div>
+
+    <script src="src/maze.js"></script>
+    <script>
+        let currentMaze = null;
+        let solutionPath = null;
+
+        function generateMaze() {
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+
+            if (width < 5 || width > 100 || height < 5 || height > 100) {
+                alert('Width and height must be between 5 and 100');
+                return;
+            }
+
+            document.getElementById('loading').classList.add('show');
+            solutionPath = null;
+            
+            setTimeout(() => {
+                currentMaze = new Maze(width, height);
+                currentMaze.generate();
+
+                document.getElementById('entrance').textContent = currentMaze.outs[0].toString();
+                document.getElementById('exit').textContent = currentMaze.outs[1].toString();
+
+                drawMaze();
+                document.getElementById('textContent').textContent = currentMaze.toString();
+                document.getElementById('loading').classList.remove('show');
+            }, 10);
+        }
+
+        function solveMaze() {
+            if (!currentMaze) {
+                alert('Generate a maze first!');
+                return;
+            }
+
+            document.getElementById('loading').classList.add('show');
+            
+            setTimeout(() => {
+                solutionPath = currentMaze.solve();
+                drawMaze();
+                document.getElementById('loading').classList.remove('show');
+            }, 10);
+        }
+
+        function drawMaze() {
+            const canvas = document.getElementById('mazeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const cellSize = 20;
+            canvas.width = currentMaze.length * cellSize + 1;
+            canvas.height = currentMaze.height * cellSize + 1;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+
+            // Draw maze
+            for (let y = 0; y < currentMaze.height; y++) {
+                for (let x = 0; x < currentMaze.length; x++) {
+                    const coord = new Coord(x, y);
+                    const cell = currentMaze.getCell(coord);
+                    const px = x * cellSize;
+                    const py = y * cellSize;
+
+                    // Draw right wall
+                    if (cell.getRightWall()) {
+                        ctx.beginPath();
+                        ctx.moveTo(px + cellSize, py);
+                        ctx.lineTo(px + cellSize, py + cellSize);
+                        ctx.stroke();
+                    }
+
+                    // Draw bottom wall
+                    if (cell.getBottomWall()) {
+                        ctx.beginPath();
+                        ctx.moveTo(px, py + cellSize);
+                        ctx.lineTo(px + cellSize, py + cellSize);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw solution path if available
+            if (solutionPath && solutionPath.length > 0) {
+                ctx.strokeStyle = '#FFC107';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                const firstCoord = solutionPath[0];
+                ctx.moveTo(firstCoord.getX() * cellSize + cellSize / 2, firstCoord.getY() * cellSize + cellSize / 2);
+                
+                for (let i = 1; i < solutionPath.length; i++) {
+                    const coord = solutionPath[i];
+                    ctx.lineTo(coord.getX() * cellSize + cellSize / 2, coord.getY() * cellSize + cellSize / 2);
+                }
+                ctx.stroke();
+            }
+
+            // Draw entrance and exit markers
+            ctx.fillStyle = '#4CAF50';
+            const entranceCoord = currentMaze.outs[0];
+            ctx.fillRect(entranceCoord.getX() * cellSize + 2, entranceCoord.getY() * cellSize + 2, cellSize - 4, cellSize - 4);
+
+            ctx.fillStyle = '#FF5252';
+            const exitCoord = currentMaze.outs[1];
+            ctx.fillRect(exitCoord.getX() * cellSize + 2, exitCoord.getY() * cellSize + 2, cellSize - 4, cellSize - 4);
+
+            // Draw top and left borders
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(canvas.width, 0);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.lineTo(0, 0);
+            ctx.stroke();
+        }
+
+        function toggleTextOutput() {
+            const textOutput = document.getElementById('textOutput');
+            if (currentMaze) {
+                document.getElementById('textContent').textContent = currentMaze.toString();
+                textOutput.classList.toggle('show');
+            } else {
+                alert('Generate a maze first!');
+            }
+        }
+
+        // Generate initial maze on page load
+        window.addEventListener('load', () => {
+            generateMaze();
+        });
+    </script>
+    </div>
+    </div>
+</body>
+</html>
